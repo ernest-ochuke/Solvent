@@ -10,5 +10,11 @@ namespace Infrastructure.Data
             
         }
         public DbSet<Bank> Banks { get; set; }
+        public DbSet<ChipCertification> ChipCertifications { get; set; }
+        public DbSet<CardProduct> CardProducts { get; set; }
+
+        public DbSet<ChipInventory> ChipInventories { get; set; }
+        public DbSet<ChipInventoryHistory> ChipInventoryHistories { get; set; }
+        public DbSet<ChipType> ChipTypes { get; set; }
     }
 }
