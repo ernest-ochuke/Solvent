@@ -1,3 +1,5 @@
+using Core.Entities.enums;
+
 namespace Core.Entities
 {
     public class ChipInventoryHistory :BaseEntity

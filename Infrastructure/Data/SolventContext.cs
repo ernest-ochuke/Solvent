@@ -1,5 +1,9 @@
+using System.Reflection;
 using Core.Entities;
+using Core.Entities.enums;
+using Microsoft.AspNetCore.Mvc.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Data
 {
@@ -16,5 +20,12 @@ namespace Infrastructure.Data
         public DbSet<ChipInventory> ChipInventories { get; set; }
         public DbSet<ChipInventoryHistory> ChipInventoryHistories { get; set; }
         public DbSet<ChipType> ChipTypes { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        }
+        
     }
 }

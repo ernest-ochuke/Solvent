@@ -1,4 +1,5 @@
 using System;
+using Core.Entities.enums;
 
 namespace Core.Entities
 {
