@@ -1,13 +1,14 @@
+using System.Collections.Generic;
+
 namespace Core.Entities
 {
-    public class Bank
+    public class Bank : BaseEntity
     {
-        public int Id { get; set; }
-
         public string Name { get; set; }
+      
+        public string UniqueIdentityNumber { get; set; }
 
-        public string UniqueId { get; set; }
-
-         
+        public string Picture { get; set; } 
+        public ICollection<CardProduct> CardProducts   { get; set; }
     }
 }
