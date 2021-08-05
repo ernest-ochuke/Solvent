@@ -1,3 +1,4 @@
+using System;
 using Core.Entities.enums;
 
 namespace Core.Entities
@@ -17,7 +18,8 @@ namespace Core.Entities
         public bool Approved { get; set; }
 
         public int ChipInventoryId { get; set; }
-
+        
+        public DateTime DateRequested { get; set; }
         public ChipInventory ChipInventory { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Core.Entities;
@@ -18,12 +19,12 @@ namespace Infrastructure.Data
         }
         public async Task<Bank> GetBankByIdAsync(int id)
         {
-           return await e_context.Banks.FindAsync(id);
+           return await e_context.Banks.Include(x=>x.CardProducts).Where(x=>x.Id == id).SingleOrDefaultAsync();
         }
 
         public async Task<IReadOnlyList<Bank>> GetBanksAsync()
         {
-           return await e_context.Banks.ToListAsync();
+           return await e_context.Banks.Include(x=>x.CardProducts).ToListAsync();
         }
     }
 }

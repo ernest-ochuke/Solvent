@@ -2,6 +2,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Infrastructure.Data;
+using Infrastructure.SeedData;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace API
               {
                   var context = services.GetRequiredService<SolventContext>();
                   await context.Database.MigrateAsync();
+                SolventContextSeed.SeedAsync(context,loggerFactory);
               }
               catch (Exception ex)
               {
