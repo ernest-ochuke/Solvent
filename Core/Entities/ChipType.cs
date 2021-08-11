@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Core.Entities
 {
@@ -11,5 +12,7 @@ namespace Core.Entities
         public string LoaDirPath { get; set; }
 
         public DateTime? ExpirationDate { get; set; }
+
+        public List<CardProduct> CardProducts { get; set; }
     }
 }
