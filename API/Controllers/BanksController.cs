@@ -9,12 +9,14 @@ using Core.Interfaces;
 using Core.Specifications;
 using AutoMapper;
 using API.Dto;
+using System.Net.Http.Headers;
+using System.Reflection.Metadata.Ecma335;
+using API.Errors;
+using Microsoft.AspNetCore.Http;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class BanksController : ControllerBase
+    public class BanksController : BaseApiController
     {
 
         private readonly IGenericRepository<Bank> e_bankRepo;
@@ -34,12 +36,15 @@ namespace API.Controllers
             return Ok(e_mapper.Map<List<BankToReturnDto>>(banks));
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<Bank>> GetBanks(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<BankToReturnDto>> GetBanks(int id)
         {
             var spec = new BanksWithCardProductSpecification(id);
             var banks = await e_bankRepo.GetEntityWithSpec(spec);
+            if(banks ==null) return NotFound(new ApiResponse(404));
 
-            return Ok(banks);
+            return Ok(e_mapper.Map<BankToReturnDto>(banks));
         }
 
     }
