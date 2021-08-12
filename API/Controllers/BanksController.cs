@@ -13,6 +13,7 @@ using System.Net.Http.Headers;
 using System.Reflection.Metadata.Ecma335;
 using API.Errors;
 using Microsoft.AspNetCore.Http;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -28,12 +29,19 @@ namespace API.Controllers
             e_bankRepo = bankRepo;
         }
         [HttpGet]
-        public async Task<ActionResult<List<BankToReturnDto>>> GetBanks()
+        public async Task<ActionResult<Pagination<BankToReturnDto>>> GetBanks([FromQuery]BankSpecParams bankParams)
         {
-            var spec = new BanksWithCardProductSpecification();
+            var spec = new BanksWithCardProductSpecification(bankParams);
+
+            var countspec = new BanksWithFiltersForCountSpecification(bankParams);
+
+            var totalItems = await e_bankRepo.CountAsync(countspec);
+
             var banks = await e_bankRepo.ListAsync(spec);
+
+            var data = e_mapper.Map<IReadOnlyList<Bank>,IReadOnlyList<BankToReturnDto>>(banks);
               
-            return Ok(e_mapper.Map<List<BankToReturnDto>>(banks));
+            return Ok( new Pagination<BankToReturnDto>(bankParams.PageIndex,bankParams.PageSize,totalItems,data));
         }
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
