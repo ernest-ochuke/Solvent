@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Core.Entities;
@@ -13,6 +14,7 @@ namespace Core.Specifications
                             (x.Name.ToLower().Contains(bankParams.Search)))))
         {
             AddInclude(x => x.CardProducts);
+            AddInclude(p => p.ChipInventories);
             AddOrderby(x => x.Name);
             ApplyPaging(bankParams.PageSize * (bankParams.PageIndex - 1),
                         bankParams.PageSize);

@@ -13,7 +13,7 @@
           "style": "scss"
         },
         "@schematics/angular:application": {
-          "strict": true
+          "strict": false
         }
       },
       "root": "",
@@ -79,8 +79,8 @@
             },
             "development": {
               "browserTarget": "client:build:development",
-              "sslKey":"ssl/localhost.key",
-              "sslCert":"ssl/localhost.crt",
+              "sslKey":"ssl/server.key",
+              "sslCert":"ssl/server.crt",
               "ssl":true
             }
           },
@@ -108,7 +108,7 @@
             "styles": [
               "./node_modules/bootstrap/dist/css/bootstrap.min.css",
               "./node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
-              "./node_modeules/font-awesome/css/font-awesome.min.css",
+              "./node_modules/font-awesome/css/font-awesome.min.css",
               "src/styles.scss"
             ],
             "scripts": []

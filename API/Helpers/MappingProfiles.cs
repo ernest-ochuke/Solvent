@@ -11,6 +11,11 @@ namespace API.Helpers
         {
             CreateMap<Bank,BankToReturnDto>()
             .ForMember(d=>d.Picture, o => o.MapFrom<BankUrlResolver>()).ReverseMap();
+
+            CreateMap<CardProduct,BankCardProductDto>().ReverseMap();
+            CreateMap<Iin,BankCardProductIinDto>().ReverseMap();
+            CreateMap<ChipInventory,BankChipHistoryDto>().ReverseMap();
+            
         }
     }
 }

@@ -15,6 +15,19 @@ namespace Infrastructure.SeedData
         {
             try
             {
+                if (!context.Iins.Any())
+                {
+                    List<Iin> iins = new List<Iin>{
+                        new Iin{  Name = "Standard Chartered Bank Infinite", Pan = "412345"},
+                        new Iin{  Name = "Standard Chartered Bank Gold", Pan = "432565"},
+                       
+                    };
+                    foreach (var iin in iins)
+                    {
+                        context.Iins.Add(iin);
+                    }
+                    context.SaveChanges();
+                }
                 if (!context.ChipTypes.Any())
                 {
                     List<ChipType> chipTypes = new List<ChipType>{
@@ -26,13 +39,13 @@ namespace Infrastructure.SeedData
                     {
                         context.ChipTypes.Add(chipType);
                     }
-                     context.SaveChanges();
+                    context.SaveChanges();
                 }
                 if (!context.Banks.Any())
                 {
                     List<Bank> banks = new List<Bank>{
-                        new Bank{  Name = "Standard Chartered Bank", UniqueIdentityNumber = "SCBN2021-01"},
-                         new Bank{  Name = "Globus Bank", UniqueIdentityNumber = "GLBN2021-03"}
+                        new Bank{  Name = "Standard Chartered Bank", UniqueIdentityNumber = "SCBN2021-01",ImageUrl="images/banks/scb.png"},
+                         new Bank{  Name = "Globus Bank", UniqueIdentityNumber = "GLBN2021-03", ImageUrl="images/banks/globus.png"}
                     };
                     foreach (var bank in banks)
                     {
@@ -40,24 +53,14 @@ namespace Infrastructure.SeedData
                     }
                     context.SaveChanges();
                 }
-                if (!context.ChipCertifications.Any())
-                {
-                    List<ChipCertification> ccs = new List<ChipCertification>{
-                        new ChipCertification{  BankId =1,CertificationStatus = CertificationStatus.Ongoing, ChipTypeId =1,CertificationType = CertificationType.WhitePlastic,StartDate = DateTime.Now, ReferenceNumber ="LB675456787"},
-                        new ChipCertification{  BankId =2,CertificationStatus = CertificationStatus.Ongoing, ChipTypeId =2,CertificationType = CertificationType.ChipPersonalizationValidation,StartDate = DateTime.Now, ReferenceNumber ="UL2345343"}
-
-                    };
-                    foreach (var cs in ccs)
-                    {
-                        context.ChipCertifications.Add(cs);
-                    }
-                     context.SaveChanges();
-                }
-
-                if (!context.CardProducts.Any())
+                  if (!context.CardProducts.Any())
                 {
                     List<CardProduct> cardproducts = new List<CardProduct>{
-                        new CardProduct{  BankId =1,ChipId =1,ProductName ="SCBGold",Comment ="Standard Chartered bank Gold product", ChipCertificationId =1},
+                        new CardProduct{  BankId =2,ChipId =1,ProductName ="SCBGold",
+                        Comment ="Standard Chartered bank Gold product",IinId =2},
+                        
+                         new CardProduct{  BankId =2,ChipId =1,ProductName ="SCBInifinite",
+                        Comment ="Standard Chartered bank Gold product",IinId =1}
 
                     };
                     foreach (var cp in cardproducts)
@@ -66,11 +69,26 @@ namespace Infrastructure.SeedData
                     }
                     context.SaveChanges();
                 }
+                if (!context.ChipCertifications.Any())
+                {
+                    List<ChipCertification> ccs = new List<ChipCertification>{
+                        new ChipCertification{ CertificationStatus = CertificationStatus.Ongoing, ChipTypeId =1,CertificationType = CertificationType.WhitePlastic,StartDate = DateTime.Now, ReferenceNumber ="LB675456787", CardProductId =1},
+                        new ChipCertification{ CertificationStatus = CertificationStatus.Ongoing, ChipTypeId =2,CertificationType = CertificationType.ChipPersonalizationValidation,StartDate = DateTime.Now, ReferenceNumber ="UL2345343", CardProductId =1}
+
+                    };
+                    foreach (var cs in ccs)
+                    {
+                        context.ChipCertifications.Add(cs);
+                    }
+                    context.SaveChanges();
+                }
+
+              
                 if (!context.ChipInventories.Any())
                 {
                     List<ChipInventory> cis = new List<ChipInventory>{
-                        new ChipInventory{  DateEntered = DateTime.Now,Quantity = 200000,KCV = "543233",ChipTypeId =1},
-                        new ChipInventory{  DateEntered = DateTime.Now,Quantity = 10000,KCV = "454333",ChipTypeId =2},
+                        new ChipInventory{  DateEntered = DateTime.Now,Quantity = 200000,KCV = "543233",ChipTypeId =1,BankId =2},
+                        new ChipInventory{  DateEntered = DateTime.Now,Quantity = 10000,KCV = "454333",ChipTypeId =2, BankId =2},
                     };
                     foreach (var ci in cis)
                     {
@@ -80,8 +98,8 @@ namespace Infrastructure.SeedData
                 }
                 {
                     List<ChipInventoryHistory> cih = new List<ChipInventoryHistory>{
-                        new ChipInventoryHistory{  ChipInventoryId=1,Quantity =1234,Action = RequestType.Substract,Requester = "Ernest Okosobo",MediatorName ="Boma Edosonwan",Description = "Remove from stock for live job",Approved = true,DateRequested = DateTime.Now},
-                        new ChipInventoryHistory{ ChipInventoryId=1,Quantity =20000,Action = RequestType.Substract,Requester = "Ernest Okosobo",MediatorName ="Boma Edosonwan",Description = "Remove from stock for live job",Approved = true,DateRequested= DateTime.Now}
+                        new ChipInventoryHistory{  ChipInventoryId=2,Quantity =1234,Action = RequestType.Substract,Requester = "Ernest Okosobo",MediatorName ="Boma Edosonwan",Description = "Remove from stock for live job",Approved = true,DateRequested = DateTime.Now},
+                        new ChipInventoryHistory{ ChipInventoryId=2,Quantity =20000,Action = RequestType.Substract,Requester = "Ernest Okosobo",MediatorName ="Boma Edosonwan",Description = "Remove from stock for live job",Approved = true,DateRequested= DateTime.Now}
                     };
                     foreach (var ci in cih)
                     {
@@ -93,9 +111,9 @@ namespace Infrastructure.SeedData
             }
             catch (Exception ex)
             {
-               var logger = loggerFactory.CreateLogger<SolventContext>();
+                var logger = loggerFactory.CreateLogger<SolventContext>();
                 logger.LogError(ex.Message);
-              
+
 
             }
         }

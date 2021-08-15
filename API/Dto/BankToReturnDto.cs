@@ -11,6 +11,7 @@ namespace API.Dto
         public string UniqueIdentityNumber { get; set; }
 
         public string Picture { get; set; } 
-        public ICollection<CardProduct> CardProducts   { get; set; }
+        public ICollection<BankCardProductDto> CardProducts   { get; set; }
+        public ICollection<BankChipHistoryDto> ChipInventories   { get; set; }
     }
 }

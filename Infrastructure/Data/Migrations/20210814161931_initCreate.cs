@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class initCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +15,7 @@ namespace Infrastructure.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     UniqueIdentityNumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Picture = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -39,35 +39,17 @@ namespace Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ChipCertifications",
+                name: "Iins",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CertificationType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ParentCertificationrRef = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    BankId = table.Column<int>(type: "int", nullable: false),
-                    ChipTypeId = table.Column<int>(type: "int", nullable: false),
-                    CertificationStatus = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Pan = table.Column<string>(type: "nvarchar(9)", maxLength: 9, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ChipCertifications", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ChipCertifications_Banks_BankId",
-                        column: x => x.BankId,
-                        principalTable: "Banks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ChipCertifications_ChipTypes_ChipTypeId",
-                        column: x => x.ChipTypeId,
-                        principalTable: "ChipTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_Iins", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -76,21 +58,27 @@ namespace Infrastructure.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ChipTypeId = table.Column<int>(type: "int", nullable: true),
+                    ChipTypeId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     DateEntered = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CurrentBalance = table.Column<int>(type: "int", nullable: false),
-                    KCV = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    KCV = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BankId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ChipInventories", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_ChipInventories_Banks_BankId",
+                        column: x => x.BankId,
+                        principalTable: "Banks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_ChipInventories_ChipTypes_ChipTypeId",
                         column: x => x.ChipTypeId,
                         principalTable: "ChipTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -100,10 +88,10 @@ namespace Infrastructure.Data.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ProductName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ChipCertificationId = table.Column<int>(type: "int", nullable: false),
                     ChipId = table.Column<int>(type: "int", nullable: false),
                     ChipTypeId = table.Column<int>(type: "int", nullable: true),
                     Comment = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IinId = table.Column<int>(type: "int", nullable: false),
                     BankId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -116,17 +104,17 @@ namespace Infrastructure.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CardProducts_ChipCertifications_ChipCertificationId",
-                        column: x => x.ChipCertificationId,
-                        principalTable: "ChipCertifications",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.NoAction);
-                    table.ForeignKey(
                         name: "FK_CardProducts_ChipTypes_ChipTypeId",
                         column: x => x.ChipTypeId,
                         principalTable: "ChipTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CardProducts_Iins_IinId",
+                        column: x => x.IinId,
+                        principalTable: "Iins",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -141,7 +129,8 @@ namespace Infrastructure.Data.Migrations
                     MediatorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Approved = table.Column<bool>(type: "bit", nullable: false),
-                    ChipInventoryId = table.Column<int>(type: "int", nullable: false)
+                    ChipInventoryId = table.Column<int>(type: "int", nullable: false),
+                    DateRequested = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -150,6 +139,38 @@ namespace Infrastructure.Data.Migrations
                         name: "FK_ChipInventoryHistories_ChipInventories_ChipInventoryId",
                         column: x => x.ChipInventoryId,
                         principalTable: "ChipInventories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ChipCertifications",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CertificationType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ParentCertificationrRef = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReferenceNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ChipTypeId = table.Column<int>(type: "int", nullable: false),
+                    CertificationStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CardProductId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ChipCertifications", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ChipCertifications_CardProducts_CardProductId",
+                        column: x => x.CardProductId,
+                        principalTable: "CardProducts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ChipCertifications_ChipTypes_ChipTypeId",
+                        column: x => x.ChipTypeId,
+                        principalTable: "ChipTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -173,24 +194,29 @@ namespace Infrastructure.Data.Migrations
                 column: "BankId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CardProducts_ChipCertificationId",
-                table: "CardProducts",
-                column: "ChipCertificationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CardProducts_ChipTypeId",
                 table: "CardProducts",
                 column: "ChipTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ChipCertifications_BankId",
+                name: "IX_CardProducts_IinId",
+                table: "CardProducts",
+                column: "IinId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChipCertifications_CardProductId",
                 table: "ChipCertifications",
-                column: "BankId");
+                column: "CardProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChipCertifications_ChipTypeId",
                 table: "ChipCertifications",
                 column: "ChipTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ChipInventories_BankId",
+                table: "ChipInventories",
+                column: "BankId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ChipInventories_ChipTypeId",
@@ -201,21 +227,31 @@ namespace Infrastructure.Data.Migrations
                 name: "IX_ChipInventoryHistories_ChipInventoryId",
                 table: "ChipInventoryHistories",
                 column: "ChipInventoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Iins_Pan",
+                table: "Iins",
+                column: "Pan",
+                unique: true,
+                filter: "[Pan] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CardProducts");
+                name: "ChipCertifications");
 
             migrationBuilder.DropTable(
                 name: "ChipInventoryHistories");
 
             migrationBuilder.DropTable(
-                name: "ChipCertifications");
+                name: "CardProducts");
 
             migrationBuilder.DropTable(
                 name: "ChipInventories");
+
+            migrationBuilder.DropTable(
+                name: "Iins");
 
             migrationBuilder.DropTable(
                 name: "Banks");

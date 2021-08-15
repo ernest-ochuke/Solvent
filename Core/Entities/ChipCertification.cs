@@ -1,4 +1,5 @@
 using System;
+using System.Security.Principal;
 using Core.Entities.enums;
 
 namespace Core.Entities
@@ -14,15 +15,13 @@ namespace Core.Entities
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
-        public int BankId { get; set; }
-
-        public Bank Bank { get; set; }
-
-        
         public int ChipTypeId { get; set; }
         public ChipType ChipType { get; set; }
 
         public CertificationStatus CertificationStatus  { get; set; }
+
+        public int CardProductId { get; set; }
+        public CardProduct CardProduct { get; set; }
 
     }
 }

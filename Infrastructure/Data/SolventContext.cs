@@ -20,6 +20,7 @@ namespace Infrastructure.Data
         public DbSet<ChipInventory> ChipInventories { get; set; }
         public DbSet<ChipInventoryHistory> ChipInventoryHistories { get; set; }
         public DbSet<ChipType> ChipTypes { get; set; }
+        public DbSet<Iin> Iins { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

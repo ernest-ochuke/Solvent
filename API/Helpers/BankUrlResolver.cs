@@ -15,9 +15,9 @@ namespace API.Helpers
         }
         public string Resolve(Bank source, BankToReturnDto destination, string destMember, ResolutionContext context)
         {
-           if(!string.IsNullOrEmpty(source.Picture))
+           if(!string.IsNullOrEmpty(source.ImageUrl))
            {
-               return e_config["ApiUrl"] + source.Picture;
+               return e_config["ApiUrl"] + source.ImageUrl;
            }
            return null;
         }

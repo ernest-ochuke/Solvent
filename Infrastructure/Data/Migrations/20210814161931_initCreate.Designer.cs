@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Data.Migrations
 {
     [DbContext(typeof(SolventContext))]
-    [Migration("20210804183442_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210814161931_initCreate")]
+    partial class initCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -28,13 +28,13 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Picture")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UniqueIdentityNumber")
                         .HasColumnType("nvarchar(450)");
@@ -61,9 +61,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("BankId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ChipCertificationId")
-                        .HasColumnType("int");
-
                     b.Property<int>("ChipId")
                         .HasColumnType("int");
 
@@ -73,6 +70,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("IinId")
+                        .HasColumnType("int");
+
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
@@ -80,9 +80,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("BankId");
 
-                    b.HasIndex("ChipCertificationId");
-
                     b.HasIndex("ChipTypeId");
+
+                    b.HasIndex("IinId");
 
                     b.ToTable("CardProducts");
                 });
@@ -94,7 +94,7 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int>("BankId")
+                    b.Property<int>("CardProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("CertificationStatus")
@@ -122,7 +122,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BankId");
+                    b.HasIndex("CardProductId");
 
                     b.HasIndex("ChipTypeId");
 
@@ -136,10 +136,10 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("ChipTypeId")
+                    b.Property<int>("BankId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CurrentBalance")
+                    b.Property<int>("ChipTypeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("DateEntered")
@@ -152,6 +152,8 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BankId");
 
                     b.HasIndex("ChipTypeId");
 
@@ -174,6 +176,9 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<int>("ChipInventoryId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("DateRequested")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -219,6 +224,31 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("ChipTypes");
                 });
 
+            modelBuilder.Entity("Core.Entities.Iin", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("Pan")
+                        .HasMaxLength(9)
+                        .HasColumnType("nvarchar(9)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Pan")
+                        .IsUnique()
+                        .HasFilter("[Pan] IS NOT NULL");
+
+                    b.ToTable("Iins");
+                });
+
             modelBuilder.Entity("Core.Entities.CardProduct", b =>
                 {
                     b.HasOne("Core.Entities.Bank", "Bank")
@@ -227,27 +257,46 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Core.Entities.ChipCertification", "ChipCertification")
-                        .WithMany()
-                        .HasForeignKey("ChipCertificationId")
+                    b.HasOne("Core.Entities.ChipType", "ChipType")
+                        .WithMany("CardProducts")
+                        .HasForeignKey("ChipTypeId");
+
+                    b.HasOne("Core.Entities.Iin", "Iin")
+                        .WithMany("CardProduct")
+                        .HasForeignKey("IinId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Bank");
+
+                    b.Navigation("ChipType");
+
+                    b.Navigation("Iin");
+                });
+
+            modelBuilder.Entity("Core.Entities.ChipCertification", b =>
+                {
+                    b.HasOne("Core.Entities.CardProduct", "CardProduct")
+                        .WithMany("ChipCertifications")
+                        .HasForeignKey("CardProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Core.Entities.ChipType", "ChipType")
                         .WithMany()
-                        .HasForeignKey("ChipTypeId");
+                        .HasForeignKey("ChipTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Bank");
-
-                    b.Navigation("ChipCertification");
+                    b.Navigation("CardProduct");
 
                     b.Navigation("ChipType");
                 });
 
-            modelBuilder.Entity("Core.Entities.ChipCertification", b =>
+            modelBuilder.Entity("Core.Entities.ChipInventory", b =>
                 {
                     b.HasOne("Core.Entities.Bank", "Bank")
-                        .WithMany()
+                        .WithMany("ChipInventories")
                         .HasForeignKey("BankId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -259,15 +308,6 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Bank");
-
-                    b.Navigation("ChipType");
-                });
-
-            modelBuilder.Entity("Core.Entities.ChipInventory", b =>
-                {
-                    b.HasOne("Core.Entities.ChipType", "ChipType")
-                        .WithMany()
-                        .HasForeignKey("ChipTypeId");
 
                     b.Navigation("ChipType");
                 });
@@ -286,11 +326,28 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Core.Entities.Bank", b =>
                 {
                     b.Navigation("CardProducts");
+
+                    b.Navigation("ChipInventories");
+                });
+
+            modelBuilder.Entity("Core.Entities.CardProduct", b =>
+                {
+                    b.Navigation("ChipCertifications");
                 });
 
             modelBuilder.Entity("Core.Entities.ChipInventory", b =>
                 {
                     b.Navigation("History");
+                });
+
+            modelBuilder.Entity("Core.Entities.ChipType", b =>
+                {
+                    b.Navigation("CardProducts");
+                });
+
+            modelBuilder.Entity("Core.Entities.Iin", b =>
+                {
+                    b.Navigation("CardProduct");
                 });
 #pragma warning restore 612, 618
         }

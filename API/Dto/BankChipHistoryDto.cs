@@ -1,15 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Core.Entities;
 using Core.Entities.enums;
 
-namespace Core.Entities
+namespace API.Dto
 {
-    public class ChipInventory : BaseEntity
+    public class BankChipHistoryDto
     {
-        public int ChipTypeId { get; set; }
-        public ChipType ChipType { get; set; }
-
+       
         public int Quantity { get; set; }
 
         public DateTime? DateEntered { get; set; }
@@ -25,8 +24,7 @@ namespace Core.Entities
             }
         }
         public string KCV { get; set; }
-        public int BankId { get; set; }
-        public Bank Bank { get; set; }
+    
         public ICollection<ChipInventoryHistory> History { get; set; }
         private int GetCurrentBalace()
         {
@@ -48,5 +46,4 @@ namespace Core.Entities
 
         }
     }
-
 }
